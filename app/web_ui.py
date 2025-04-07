@@ -24,9 +24,12 @@ if st.button("🚀 Recommend Assessments"):
         with st.spinner("Analyzing and retrieving best assessments..."):
             try:
                 response = requests.post(f"{API_URL}/recommend", json={"query": query, "top_k": top_k})
-                if response.status_code == 200:
-                    results = pd.DataFrame(response.json())
-                    
+                response_data = response.json()
+
+                # Check if response is a list (expected result), or dict (probably error)
+                if isinstance(response_data, list):
+                    results = pd.DataFrame(response_data)
+
                     st.success(f"Top {len(results)} assessments recommended:")
 
                     # Make assessment names clickable
@@ -38,14 +41,15 @@ if st.button("🚀 Recommend Assessments"):
                         axis=1
                     )
 
-                    # Hide columns you don't want to show
                     if "URL" in results.columns:
                         results = results.drop(columns=["URL"])
                     if "score" in results.columns:
                         results = results.drop(columns=["score"])
 
                     st.markdown(results.to_markdown(index=False), unsafe_allow_html=True)
+
                 else:
-                    st.error(f"❌ API Error: {response.status_code} - {response.text}")
+                    st.error(f"❌ API Error: {response_data.get('error', 'Unexpected response')}")
+
             except Exception as e:
-                st.error(f"⚠️ Failed to connect to API: {e}")
+                st.error(f"⚠️ Failed to connect to API:
