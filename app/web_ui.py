@@ -33,7 +33,8 @@ if st.button("🚀 Recommend Assessments"):
                     if num_results == 0:
                         st.info("No relevant assessments were found for this query.")
                     else:
-                        st.success(f"{num_results} assessment(s) recommended (out of requested {top_k}):")
+                        if num_results < top_k:
+                            st.info(f"Only {num_results} assessments found (you requested {top_k}).")
 
                         results = pd.DataFrame(response_data)
 
