@@ -23,7 +23,7 @@ if st.button("🚀 Recommend Assessments"):
     else:
         with st.spinner("Analyzing and retrieving best assessments..."):
             try:
-                response = requests.post(API_URL, json={"query": query, "top_k": top_k})
+                response = requests.post(f"{API_URL}/recommend", json={"query": query, "top_k": top_k})
                 if response.status_code == 200:
                     results = pd.DataFrame(response.json())
                     
