@@ -40,13 +40,23 @@ if st.button("🚀 Recommend Assessments"):
                         lambda row: make_clickable(row["URL"], row["Assessment Name"]),
                         axis=1
                     )
-
-                    if "URL" in results.columns:
-                        results = results.drop(columns=["URL"])
-                    if "score" in results.columns:
-                        results = results.drop(columns=["score"])
-
+                    # Reorder and filter the exact columns to show
+                    display_cols = [
+                        "Assessment Name",
+                        "Source",
+                        "Job Level",
+                        "Duration",
+                        "Test Type",
+                        "Remote Testing Support",
+                        "Adaptive/IRT Support"
+                    ]
+                    
+                    # Ensure those columns exist before slicing
+                    available_cols = [col for col in display_cols if col in results.columns]
+                    results = results[available_cols]
+                    
                     st.markdown(results.to_markdown(index=False), unsafe_allow_html=True)
+
 
                 else:
                     st.error(f"❌ API Error: {response_data.get('error', 'Unexpected response')}")
