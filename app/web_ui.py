@@ -15,7 +15,7 @@ Type in a job description, query, or skill set, and get personalized SHL assessm
 """)
 
 query = st.text_area("📝 Paste your query or JD here", height=200)
-top_k = st.slider("🔢 Number of recommendations", min_value=1, max_value=20, value=10)
+top_k = st.slider("🔢 Number of recommendations", min_value=1, max_value=10, value=5)
 
 if st.button("🚀 Recommend Assessments"):
     if not query.strip():
@@ -26,7 +26,6 @@ if st.button("🚀 Recommend Assessments"):
                 response = requests.post(f"{API_URL}/recommend", json={"query": query, "top_k": top_k})
                 response_data = response.json()
 
-                # Ensure we got a list (expected format)
                 if isinstance(response_data, list):
                     num_results = len(response_data)
 
@@ -37,6 +36,8 @@ if st.button("🚀 Recommend Assessments"):
                             st.info(f"Only {num_results} assessments found (you requested {top_k}).")
 
                         results = pd.DataFrame(response_data)
+
+                        st.success(f"{num_results} assessment(s) recommended:")
 
                         # Make assessment names clickable
                         def make_clickable(url, name):
@@ -59,7 +60,6 @@ if st.button("🚀 Recommend Assessments"):
                             "Adaptive/IRT Support"
                         ]
 
-                        # Ensure those columns exist before slicing
                         available_cols = [col for col in display_cols if col in results.columns]
                         results = results[available_cols]
 
@@ -70,3 +70,4 @@ if st.button("🚀 Recommend Assessments"):
 
             except Exception as e:
                 st.error(f"⚠️ Failed to connect to API: {e}")
+
