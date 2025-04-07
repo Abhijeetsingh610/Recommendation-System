@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 
 # 🔗 Your FastAPI endpoint
-API_URL = "https://shl-assessment-api.onrender.com/recommend"
+API_URL = "https://fastapi-qbrg.onrender.com"
 
 st.set_page_config(page_title="SHL Assessment Recommender", layout="centered")
 
