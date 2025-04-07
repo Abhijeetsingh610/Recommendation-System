@@ -52,4 +52,5 @@ if st.button("🚀 Recommend Assessments"):
                     st.error(f"❌ API Error: {response_data.get('error', 'Unexpected response')}")
 
             except Exception as e:
-                st.error(f"⚠️ Failed to connect to API:
+                st.error(f"⚠️ Failed to connect to API: {e}")
+
