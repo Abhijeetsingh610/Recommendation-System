@@ -28,39 +28,42 @@ if st.button("🚀 Recommend Assessments"):
 
                 # Check if response is a list (expected result), or dict (probably error)
                 if isinstance(response_data, list):
-                    results = pd.DataFrame(response_data)
+                    if not response_data:
+                        st.info("No relevant assessments were found for this query.")
+                    else:
+                        results = pd.DataFrame(response_data)
 
-                    st.success(f"Top {len(results)} assessments recommended:")
+                        st.success(f"{len(results)} assessment(s) recommended:")
 
-                    # Make assessment names clickable
-                    def make_clickable(url, name):
-                        return f"[{name}]({url})"
+                        # Make assessment names clickable
+                        def make_clickable(url, name):
+                            return f"[{name}]({url})" if pd.notna(url) and pd.notna(name) else name
 
-                    results["Assessment Name"] = results.apply(
-                        lambda row: make_clickable(row["URL"], row["Assessment Name"]),
-                        axis=1
-                    )
-                    # Reorder and filter the exact columns to show
-                    display_cols = [
-                        "Assessment Name",
-                        "Source",
-                        "Job Level",
-                        "Duration",
-                        "Test Type",
-                        "Remote Testing Support",
-                        "Adaptive/IRT Support"
-                    ]
-                    
-                    # Ensure those columns exist before slicing
-                    available_cols = [col for col in display_cols if col in results.columns]
-                    results = results[available_cols]
-                    
-                    st.markdown(results.to_markdown(index=False), unsafe_allow_html=True)
+                        if "URL" in results.columns and "Assessment Name" in results.columns:
+                            results["Assessment Name"] = results.apply(
+                                lambda row: make_clickable(row.get("URL"), row.get("Assessment Name")),
+                                axis=1
+                            )
 
+                        # Reorder and filter the exact columns to show
+                        display_cols = [
+                            "Assessment Name",
+                            "Source",
+                            "Job Level",
+                            "Duration",
+                            "Test Type",
+                            "Remote Testing Support",
+                            "Adaptive/IRT Support"
+                        ]
+
+                        # Ensure those columns exist before slicing
+                        available_cols = [col for col in display_cols if col in results.columns]
+                        results = results[available_cols]
+
+                        st.markdown(results.to_markdown(index=False), unsafe_allow_html=True)
 
                 else:
                     st.error(f"❌ API Error: {response_data.get('error', 'Unexpected response')}")
 
             except Exception as e:
                 st.error(f"⚠️ Failed to connect to API: {e}")
-
