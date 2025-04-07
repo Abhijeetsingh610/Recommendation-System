@@ -26,14 +26,16 @@ if st.button("🚀 Recommend Assessments"):
                 response = requests.post(f"{API_URL}/recommend", json={"query": query, "top_k": top_k})
                 response_data = response.json()
 
-                # Check if response is a list (expected result), or dict (probably error)
+                # Ensure we got a list (expected format)
                 if isinstance(response_data, list):
-                    if not response_data:
+                    num_results = len(response_data)
+
+                    if num_results == 0:
                         st.info("No relevant assessments were found for this query.")
                     else:
-                        results = pd.DataFrame(response_data)
+                        st.success(f"{num_results} assessment(s) recommended (out of requested {top_k}):")
 
-                        st.success(f"{len(results)} assessment(s) recommended:")
+                        results = pd.DataFrame(response_data)
 
                         # Make assessment names clickable
                         def make_clickable(url, name):
